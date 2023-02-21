@@ -1,9 +1,9 @@
-jest.mock('../../api/api.js')
 import { shallowMount } from '@vue/test-utils'
 import ItemList from '../ItemList.vue'
 import Item from '../../components/Item.vue'
 import flushPromises from 'flush-promises'
 import { fetchListData } from '../../api/api'
+jest.mock('../../api/api.js')
 
 describe('ItemList.vue', () => {
   test('renders an Item with data for each item', async () => {
