@@ -1,5 +1,8 @@
+import Item from '../Item.vue'
+import Vue from 'vue'
+
 describe('Item', () => {
   test('sanity test', () => {
-    expect(true).toBe(true) // Asserts that true equals true
+    console.log(Item)
   })
 })
