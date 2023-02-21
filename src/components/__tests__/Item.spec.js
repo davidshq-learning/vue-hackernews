@@ -15,12 +15,18 @@ describe('Item.vue', () => {
   })
   test('renders a link to the item.url with item.title as text', () => {
     const item = { // Create a mock item to pass in as prop data
+      url: 'http://some-url.com',
       title: 'some title'
     }
     const wrapper = shallowMount(Item, {
       propsData: { item } // Passes prop data
     })
-    // Finds an <a> element and checks text rendered is item.title
-    expect(wrapper.find('a').text()).toBe(item.title)
+    const a = wrapper.find('a') // Finds an <a> element
+    expect(a.text()).toBe(item.title) // Checks text rendered is item.title
+    // Prefer value assertions over boolean assertions
+    // Boolean assertion
+    // expect(a.attributes().href === item.url).toBe(true) // Checks an <a> element has an href attribute with value item.url
+    // Values assertion
+    expect(a.attributes().href).toBe(item.url)
   })
 })
