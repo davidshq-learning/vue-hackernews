@@ -1,6 +1,7 @@
 <template>
   <li>
-    {{ item.url }}
+    <a>{{ item.title }}</a>
+    {{  item.url }}
   </li>
 </template>
 
