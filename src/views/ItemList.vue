@@ -29,7 +29,7 @@ export default {
   methods: {
     loadItems () {
       this.$bar.start()
-      fetchListData('top')
+      fetchListData('top') // Get top items from Hacker News
         .then(items => {
           this.displayItems = items
           this.$bar.finish()

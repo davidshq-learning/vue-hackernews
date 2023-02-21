@@ -52,7 +52,7 @@ describe('ItemList.vue', () => {
       start: () => {},
       fail: jest.fn()
     }
-    fetchListData.mockRejectedValueOnce()
+    fetchListData.mockRejectedValueOnce() // Rejects when fetchListData is called so we can test error case
     shallowMount(ItemList, { mocks: { $bar } })
     await flushPromises()
 
