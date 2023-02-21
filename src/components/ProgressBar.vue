@@ -25,10 +25,14 @@ export default {
     start () {
       this.hidden = false
       this.percent = 0
+      this.timer = setInterval(() => { // Create an interval and save as property of vm
+        this.percent++
+      }, 100)
     },
     finish () {
       this.hidden = true
       this.percent = 100
+      clearInterval(this.timer)
     }
   }
 }
