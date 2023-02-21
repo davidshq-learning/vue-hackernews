@@ -1,3 +1,8 @@
 <template>
-  <div class="hidden"></div>
+  <div
+    class="hidden"
+    :style="{
+      'width': '0%'
+    }"
+  ></div>
 </template>
