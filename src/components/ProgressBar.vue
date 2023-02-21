@@ -7,7 +7,7 @@
       hidden: hidden
     }"
     :style="{
-      'width': '0%'
+      'width': `${percent}%`
     }"
     >
   </div>
@@ -17,14 +17,19 @@
 export default {
   data () {
     return {
-      hidden: true
+      hidden: true,
+      percent: 0
     }
   },
   methods: {
     start () {
       this.hidden = false
+      this.percent = 0
     },
-    finish () {}
+    finish () {
+      this.hidden = true
+      this.percent = 100
+    }
   }
 }
 </script>
