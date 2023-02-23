@@ -18,8 +18,19 @@ export default {
     Item
   },
   beforeMount () {
+    this.loadItems()
   },
   methods: {
+    loadItems () {
+      this.$bar.start()
+      this.$store.dispatch('fetchListData', {
+        type: 'top'
+      })
+        .then(items => {
+          this.displayItems = items
+          this.$bar.finish()
+        })
+    }
   }
 }
 </script>

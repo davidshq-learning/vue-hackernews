@@ -42,4 +42,37 @@ describe('ItemList.vue', () => {
       expect(wrapper.vm.item).toBe(items[i])
     })
   })
+
+  test('calls $bar start on load', () => {
+    const $bar = {
+      start: jest.fn(),
+      finish: () => {}
+    }
+    shallowMount(ItemList, { mocks: { $bar }, localVue, store })
+    expect($bar.start).toHaveBeenCalled()
+  })
+
+  test('calls $bar finish when load successful', async () => {
+    expect.assertions(1)
+    const $bar = {
+      start: () => {},
+      finish: jest.fn()
+    }
+    shallowMount(ItemList, { mocks: { $bar }, localVue, store })
+    await flushPromises()
+    expect($bar.finish).toHaveBeenCalled()
+  })
+
+  test('dispatches fetchListData with top', async () => {
+    expect.assertions(1)
+    const $bar = {
+      start: () => {},
+      finish: () => {}
+    }
+    store.dispatch = jest.fn(() => Promise.resolve()) // Set dispatch to mock function
+    shallowMount(ItemList, { mocks: { $bar }, localVue, store })
+    expect(store.dispatch).toHaveBeenCalledWith('fetchListData', {
+      type: 'top'
+    })
+  })
 })
