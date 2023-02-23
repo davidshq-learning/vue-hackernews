@@ -76,13 +76,22 @@ describe('ItemList.vue', () => {
     expect(mocks.$bar.finish).toHaveBeenCalled()
   })
 
-  test('dispatches fetchListData with top', async () => {
+  test('dispatches fetchListData with $route.params.type', async () => {
     expect.assertions(1)
     const store = createStore()
     store.dispatch = jest.fn(() => Promise.resolve())
-    createWrapper({ store })
+
+    const type = 'a type'
+    const mocks = {
+      $route: {
+        params: {
+          type
+        }
+      }
+    }
+    createWrapper({ store, mocks })
     await flushPromises()
-    expect(store.dispatch).toHaveBeenCalledWith('fetchListData', { type: 'top' })
+    expect(store.dispatch).toHaveBeenCalledWith('fetchListData', { type })
   })
 
   test('calls $bar fail when fetchListData throws', async () => {

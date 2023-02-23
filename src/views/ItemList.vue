@@ -24,7 +24,7 @@ export default {
     loadItems () {
       this.$bar.start()
       this.$store.dispatch('fetchListData', {
-        type: 'top'
+        type: this.$route.params.type
       })
         .then(items => {
           this.displayItems = items
