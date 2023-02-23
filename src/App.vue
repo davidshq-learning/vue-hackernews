@@ -1,8 +1,21 @@
 <template>
   <div id="app">
-    <header class="header" />
+    <header class="header">
+      <nav class="inner">
+        <router-link to="/top">Top</router-link>
+        <router-link to="/new">New</router-link>
+        <router-link to="/show">Show</router-link>
+        <router-link to="/ask">Ask</router-link>
+        <router-link to="/job">Jobs</router-link>
+      </nav>
+    </header>
     <div class="view">
-      <item-list />
+      <!--
+        Renders the app using the <router-view> component,
+        and adds a unique key so the component rerenders when
+        the type changes
+      -->
+      <router-view :key="$route.params.type" />
   </div>
   </div>
 </template>
