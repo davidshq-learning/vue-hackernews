@@ -9,7 +9,7 @@ const localVue = createLocalVue()
 localVue.use(Vuex)
 
 describe('ItemList.vue', () => {
-  function customizer(objValue, srcValue) {
+  function customizer (objValue, srcValue) {
     // If property is an array, overwrite value rather than merging
     if (Array.isArray(srcValue)) {
       return srcValue
@@ -19,6 +19,7 @@ describe('ItemList.vue', () => {
       return srcValue
     }
   }
+
   function createStore (overrides) {
     const defaultStoreConfig = {
       getters: {
@@ -31,22 +32,36 @@ describe('ItemList.vue', () => {
     return new Vuex.Store(defaultStoreConfig, overrides, customizer)
   }
 
-  test('renders an Item with data for each item in displayItems', () => {
-    const $bar = { // Mock to avoid errors when mounting component
-      start: () => {},
-      finish: () => {}
+  function createWrapper (overrides) {
+    const defaultMountingOptions = {
+      mocks: {
+        $bar: {
+          start: jest.fn(),
+          finish: jest.fn(),
+          fail: jest.fn()
+        }
+      },
+      localVue,
+      store: createStore()
     }
+    return shallowMount(
+      ItemList,
+      mergeWith(
+        defaultMountingOptions,
+        overrides,
+        customizer
+      )
+    )
+  }
+
+  test('renders an Item with data for each item in displayItems', () => {
     const items = [{}, {}, {}] // Mock items
     const store = createStore({ // Create store with mock items
       getters: {
         displayItems: () => items
       }
     })
-    const wrapper = shallowMount(ItemList, {
-      mocks: { $bar },
-      localVue,
-      store
-    })
+    const wrapper = createWrapper({ store })
     const Items = wrapper.findAll(Item)
     expect(Items).toHaveLength(items.length)
     Items.wrappers.forEach((wrapper, i) => {
@@ -54,48 +69,47 @@ describe('ItemList.vue', () => {
     })
   })
 
-  test('calls $bar start on load', () => {
-    const $bar = {
-      start: jest.fn(),
-      finish: () => {}
+  test('calls $bar start on render', () => {
+    const mocks = {
+      $bar: {
+        start: jest.fn()
+      }
     }
-    shallowMount(ItemList, { mocks: { $bar }, localVue, store })
-    expect($bar.start).toHaveBeenCalled()
+    createWrapper({ mocks }) // No need to assign to a variable
+    expect(mocks.$bar.start).toHaveBeenCalled()
   })
 
   test('calls $bar finish when load successful', async () => {
-    expect.assertions(1)
-    const $bar = {
-      start: () => {},
-      finish: jest.fn()
+    const mocks = {
+      $bar: {
+        finish: jest.fn()
+      }
     }
-    shallowMount(ItemList, { mocks: { $bar }, localVue, store })
+    createWrapper({ mocks })
     await flushPromises()
-    expect($bar.finish).toHaveBeenCalled()
+    expect(mocks.$bar.finish).toHaveBeenCalled()
   })
 
   test('dispatches fetchListData with top', async () => {
-    expect.assertions(1)
-    const $bar = {
-      start: () => {},
-      finish: () => {}
-    }
+    const store = createStore()
     store.dispatch = jest.fn(() => Promise.resolve())
-    shallowMount(ItemList, { mocks: { $bar }, localVue, store })
+    createWrapper({ store })
+    await flushPromises()
     expect(store.dispatch).toHaveBeenCalledWith('fetchListData', {
-      type: 'top'
-    })
+      type: 'top' })
   })
 
   test('calls $bar fail when fetchListData throws', async () => {
-    expect.assertions(1)
-    const $bar = {
-      start: jest.fn(),
-      fail: jest.fn()
+    const store = createStore({
+      actions: { fetchListData: jest.fn(() => Promise.reject()) }
+    })
+    const mocks = {
+      $bar: {
+        fail: jest.fn()
+      }
     }
-    storeOptions.actions.fetchListData.mockRejectedValue()
-    shallowMount(ItemList, { mocks: { $bar }, localVue, store })
+    createWrapper({ mocks, store })
     await flushPromises()
-    expect($bar.fail).toHaveBeenCalled()
+    expect(mocks.$bar.fail).toHaveBeenCalled()
   })
 })
