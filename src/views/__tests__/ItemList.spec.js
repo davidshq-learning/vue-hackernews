@@ -3,16 +3,24 @@ import Vuex from 'vuex'
 import flushPromises from 'flush-promises'
 import ItemList from '../ItemList.vue'
 import Item from '../../components/Item.vue'
+import mergeWith from 'lodash.mergewith'
 
 const localVue = createLocalVue()
 localVue.use(Vuex)
 
 describe('ItemList.vue', () => {
-  let storeOptions
-  let store
-
-  beforeEach(() => {
-    storeOptions = {
+  function customizer(objValue, srcValue) {
+    // If property is an array, overwrite value rather than merging
+    if (Array.isArray(srcValue)) {
+      return srcValue
+    }
+    // If property is an empty object, overwrite with an empty object
+    if (srcValue instanceof Object && Object.keys(srcValue).length === 0) {
+      return srcValue
+    }
+  }
+  function createStore (overrides) {
+    const defaultStoreConfig = {
       getters: {
         displayItems: jest.fn()
       },
@@ -20,16 +28,20 @@ describe('ItemList.vue', () => {
         fetchListData: jest.fn(() => Promise.resolve())
       }
     }
-    store = new Vuex.Store(storeOptions)
-  })
+    return new Vuex.Store(defaultStoreConfig, overrides, customizer)
+  }
 
   test('renders an Item with data for each item in displayItems', () => {
-    const $bar = {
+    const $bar = { // Mock to avoid errors when mounting component
       start: () => {},
       finish: () => {}
     }
-    const items = [{}, {}, {}]
-    storeOptions.getters.displayItems.mockReturnValue(items)
+    const items = [{}, {}, {}] // Mock items
+    const store = createStore({ // Create store with mock items
+      getters: {
+        displayItems: () => items
+      }
+    })
     const wrapper = shallowMount(ItemList, {
       mocks: { $bar },
       localVue,
