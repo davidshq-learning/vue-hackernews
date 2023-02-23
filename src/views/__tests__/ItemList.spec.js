@@ -18,9 +18,28 @@ describe('ItemList.vue', () => {
         displayItems: jest.fn()
       },
       actions: {
-        fetchListData: jest.fin(() => Promise.resolve())
+        fetchListData: jest.fn(() => Promise.resolve())
       }
     }
     store = new Vuex.Store(storeOptions) // Reassign as fresh store before each test
+  })
+
+  test('renders an Item with data for each item in displayItems', () => {
+    const $bar = {
+      start: () => {},
+      finish: () => {}
+    }
+    const items = [{}, {}, {}]
+    storeOptions.getters.displayItems.mockReturnValue(items) // Mock the return result of displayItems
+    const wrapper = shallowMount(ItemList, { // Mounts an instance w/an injected store
+      mocks: { $bar },
+      localVue,
+      store
+    })
+    const Items = wrapper.findAll(Item)
+    expect(Items).toHaveLength(items.length)
+    Items.wrappers.forEach((wrapper, i) => {
+      expect(wrapper.vm.item).toBe(items[i])
+    })
   })
 })
