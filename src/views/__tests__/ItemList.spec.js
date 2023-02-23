@@ -30,6 +30,9 @@ describe('ItemList.vue', () => {
           start: jest.fn(),
           finish: jest.fn(),
           fail: jest.fn()
+        },
+        $route: {
+          params: { type: 'top' }
         }
       },
       localVue,
