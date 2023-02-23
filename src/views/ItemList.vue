@@ -7,6 +7,9 @@
         :item="item"
       />
     </div>
+    <span>
+      {{ $route.params.page || 1 }}/{{ $store.getters.maxPage }}
+    </span>
   </div>
 </template>
 
@@ -25,11 +28,13 @@ export default {
       this.$bar.start()
       this.$store.dispatch('fetchListData', {
         type: this.$route.params.type
+      }).then(() => {
+        if (this.$route.params.page > this.$store.getters.maxPage) {
+          this.$router.replace(`/${this.$route.params.type}/1`)
+          return
+        }
+        this.$bar.finish()
       })
-        .then(items => {
-          this.displayItems = items
-          this.$bar.finish()
-        })
         .catch(() => {
           this.$bar.fail()
         })
